@@ -38,7 +38,7 @@ def go(config: DictConfig):
         if "download" in active_steps:
             # Download file and load in W&B
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/get_data",
+                f"{config['main']['components_repository']}/get_data/",
                 "main",
                 parameters={
                     "sample": config["etl"]["sample"],
@@ -49,10 +49,32 @@ def go(config: DictConfig):
             )
 
         if "basic_cleaning" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+          # Clean the data and save in W&B
+            _ = mlflow.run(
+                f"{config['main']['components_repository']}/get_data",
+                "main",
+                parameters={
+                    "sample": config["etl"]["sample"],
+                    "artifact_name": "sample.csv",
+                    "artifact_type": "raw_data",
+                    "artifact_description": "Raw file as downloaded"
+                },
+            )
+
+        if "preprocess" in active_steps:
+
+            ## YOUR CODE HERE: call the preprocess step
+            _ = mlflow.run(
+                os.path.join(root_path, "preprocess"),
+                "main",
+                parameters={
+                    "input_artifact": "raw_data.parquet:latest",
+                    "artifact_name": "preprocessed_data.csv",
+                    "artifact_type": "preprocessed_data",
+                    "artifact_description": "Cleaned data"
+                },
+            )
+
 
         if "data_check" in active_steps:
             ##################

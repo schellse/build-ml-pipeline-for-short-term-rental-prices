@@ -1,0 +1,9 @@
+name: test_regression_model
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9.12
+  - pip=20.3.3
+  - wanb=0.12.21
+#  - pip:
+#      - wandb==0.10.31
