@@ -38,8 +38,9 @@ def go(config: DictConfig):
         if "download" in active_steps:
             # Download file and load in W&B
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/get_data/",
-                "main",
+                f"{config['main']['components_repository']}/get_data",
+                entry_point="main",
+                version="main",
                 parameters={
                     "sample": config["etl"]["sample"],
                     "artifact_name": "sample.csv",
@@ -51,13 +52,15 @@ def go(config: DictConfig):
         if "basic_cleaning" in active_steps:
           # Clean the data and save in W&B
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/get_data",
+                os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),    #os.getcwd() #hydra.utils.get_original_cwd()
                 "main",
                 parameters={
-                    "sample": config["etl"]["sample"],
-                    "artifact_name": "sample.csv",
-                    "artifact_type": "raw_data",
-                    "artifact_description": "Raw file as downloaded"
+                    "input_artifact": "sample.csv:latest",
+                    "output_artifact": "clean_sample.csv",
+                    "output_type": "clean_samlpe",
+                    "output_description": "Cleaned data",
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"],
                 },
             )
 
@@ -65,6 +68,7 @@ def go(config: DictConfig):
 
             ## YOUR CODE HERE: call the preprocess step
             _ = mlflow.run(
+                hydra.
                 os.path.join(root_path, "preprocess"),
                 "main",
                 parameters={
